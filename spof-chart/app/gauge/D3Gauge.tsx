@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { arc as d3Arc } from "d3-shape";
 import {
   defaultGaugeSpec,
@@ -50,6 +51,35 @@ export function D3Gauge({
   });
 
   const textY = cy - innerRadius / 2;
+  const display = `${Math.round(value)}/100`;
+
+  const lastLoggedValueRef = useRef<number | null>(null);
+  if (lastLoggedValueRef.current !== value) {
+    lastLoggedValueRef.current = value;
+    // #region agent log
+    fetch("http://127.0.0.1:7249/ingest/80774515-3493-4388-b7dc-3e122ddba8b2", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: "debug-session",
+        runId: "pre-fix",
+        hypothesisId: "A",
+        location: "app/gauge/D3Gauge.tsx",
+        message: "Gauge render values",
+        data: {
+          value,
+          display_current: display,
+          display_alt_roundBeforeDivide: Math.round(value) / 100,
+          display_alt_fractionText: `${Math.round(value)}/100`,
+          specMin: spec.min,
+          specMax: spec.max,
+          dotAngleDeg: dot.angleDeg,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+  }
 
   return (
     <svg
@@ -90,7 +120,7 @@ export function D3Gauge({
         className="fill-slate-900"
         style={{ fontSize: 44, fontWeight: 700 }}
       >
-        {Math.round(value)}
+        {display}
       </text>
       <text
         x={cx}
