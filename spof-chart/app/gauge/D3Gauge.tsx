@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { arc as d3Arc } from "d3-shape";
 import {
   defaultGaugeSpec,
@@ -52,38 +51,6 @@ export function D3Gauge({
 
   const textY = cy - innerRadius / 2;
   const display = `${Math.round(value)}/100`;
-
-  const lastLoggedValueRef = useRef<number | null>(null);
-  if (lastLoggedValueRef.current !== value) {
-    lastLoggedValueRef.current = value;
-    // #region agent log
-    const payload = {
-      sessionId: "debug-session",
-      runId: "post-fix",
-      hypothesisId: "VERIFY",
-      location: "app/gauge/D3Gauge.tsx",
-      message: "Gauge render values (post-fix verify)",
-      data: {
-        value,
-        display_current: display,
-        specMin: spec.min,
-        specMax: spec.max,
-        dotAngleDeg: dot.angleDeg,
-      },
-      timestamp: Date.now(),
-    };
-    fetch("http://127.0.0.1:7249/ingest/80774515-3493-4388-b7dc-3e122ddba8b2", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }).catch(() => {});
-    fetch("/api/_debug-log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }).catch(() => {});
-    // #endregion
-  }
 
   return (
     <svg

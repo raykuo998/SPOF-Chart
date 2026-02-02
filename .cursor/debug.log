@@ -1,0 +1,2 @@
+{"sessionId":"debug-session","runId":"post-fix","hypothesisId":"VERIFY","location":"app/gauge/D3Gauge.tsx","message":"Gauge render values (post-fix verify)","data":{"value":28,"display_current":"28/100","specMin":0,"specMax":100,"dotAngleDeg":129.6},"timestamp":1770042466937}
+{"sessionId":"debug-session","runId":"post-fix","hypothesisId":"VERIFY","location":"app/gauge/D3Gauge.tsx","message":"Gauge render values (post-fix verify)","data":{"value":28,"display_current":"28/100","specMin":0,"specMax":100,"dotAngleDeg":129.6},"timestamp":1770042467546}
