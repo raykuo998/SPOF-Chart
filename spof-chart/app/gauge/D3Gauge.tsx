@@ -57,26 +57,30 @@ export function D3Gauge({
   if (lastLoggedValueRef.current !== value) {
     lastLoggedValueRef.current = value;
     // #region agent log
+    const payload = {
+      sessionId: "debug-session",
+      runId: "post-fix",
+      hypothesisId: "VERIFY",
+      location: "app/gauge/D3Gauge.tsx",
+      message: "Gauge render values (post-fix verify)",
+      data: {
+        value,
+        display_current: display,
+        specMin: spec.min,
+        specMax: spec.max,
+        dotAngleDeg: dot.angleDeg,
+      },
+      timestamp: Date.now(),
+    };
     fetch("http://127.0.0.1:7249/ingest/80774515-3493-4388-b7dc-3e122ddba8b2", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "debug-session",
-        runId: "pre-fix",
-        hypothesisId: "A",
-        location: "app/gauge/D3Gauge.tsx",
-        message: "Gauge render values",
-        data: {
-          value,
-          display_current: display,
-          display_alt_roundBeforeDivide: Math.round(value) / 100,
-          display_alt_fractionText: `${Math.round(value)}/100`,
-          specMin: spec.min,
-          specMax: spec.max,
-          dotAngleDeg: dot.angleDeg,
-        },
-        timestamp: Date.now(),
-      }),
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+    fetch("/api/_debug-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     }).catch(() => {});
     // #endregion
   }
